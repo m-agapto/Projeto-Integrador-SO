@@ -1,182 +1,98 @@
-# Agendador Web de Tarefas Linux
+# Agendador Web de Tarefas — Windows e Linux
 
-Uma aplicação web para cadastrar, programar e acompanhar tarefas automatizadas em um ambiente Linux, sem exigir que o usuário escreva comandos diretamente no terminal. O sistema oferece uma interface centralizada para gerenciar execuções agendadas, consultar resultados e identificar falhas.
-
-> **Objetivo:** simplificar a automação de tarefas administrativas no Linux e demonstrar, na prática, conceitos de Sistemas Operacionais, execução de processos, permissões, agendamento e registro de eventos.
-
-## Problema que o projeto resolve
-
-Tarefas como gerar relatórios, verificar espaço em disco ou organizar arquivos muitas vezes precisam ser executadas repetidamente. Configurá-las manualmente pelo terminal pode ser difícil para usuários iniciantes e dificulta o acompanhamento do histórico de execuções.
-
-O Agendador Web de Tarefas Linux propõe uma interface gráfica acessível pelo navegador para configurar tarefas permitidas, definir quando devem ser executadas e consultar seus resultados em um único lugar.
+Aplicação web local em Flask para cadastrar tarefas predefinidas, agendar execução única ou recorrente, e consultar histórico, resultados e falhas. A versão agora funciona tanto no **Windows 10/11** quanto no Linux, usando APIs portáveis do Python em vez de depender de comandos exclusivos do Linux.
 
 ## Funcionalidades
 
-### 1. Cadastro e configuração de tarefas
-- Criar uma tarefa com nome e descrição.
-- Selecionar uma ação previamente autorizada pelo sistema.
-- Configurar os parâmetros permitidos para a ação.
-- Definir data e hora para uma execução única ou uma frequência recorrente.
-- Consultar e editar as configurações de tarefas existentes.
+- Painel com resumo de tarefas e execuções.
+- Cadastro de execução única ou recorrência por intervalo.
+- Ações seguras predefinidas: registrar data/hora, consultar espaço em disco, verificar diretório pessoal e gerar relatório de arquivos de teste.
+- Pausar, reativar e cancelar tarefas futuras.
+- Histórico de execução com saída, erros, duração e código de saída.
+- Registro de eventos, pesquisa e exportação do histórico em CSV.
+- Interface responsiva em português e banco SQLite local.
 
-### 2. Agendamento e controle
-- Agendar tarefas para uma data e horário específicos.
-- Configurar recorrências, como diariamente, semanalmente ou em intervalos definidos.
-- Pausar e reativar tarefas recorrentes.
-- Cancelar tarefas futuras.
-- Visualizar o próximo horário previsto para execução.
+## Instalação no Windows 10/11
 
-### 3. Acompanhamento das execuções
-- Exibir o estado de cada tarefa: agendada, em execução, concluída, falhou, pausada ou cancelada.
-- Mostrar o horário de início e término, a duração e o código de saída.
-- Consultar a saída produzida pela tarefa e as mensagens de erro.
-- Manter um histórico das execuções anteriores.
-- Pesquisar tarefas por nome, estado ou período.
+1. Instale **Python 3.10 ou superior** em [python.org](https://www.python.org/downloads/windows/). Marque a opção **Add python.exe to PATH** durante a instalação.
+2. Extraia o ZIP para uma pasta normal, por exemplo `C:\Projetos\agendador-web`.
+3. Abra PowerShell nessa pasta (no Explorador de Arquivos, clique na barra de endereço, digite `powershell` e pressione Enter).
+4. Execute o instalador:
 
-### 4. Registro e relatórios
-- Registrar eventos importantes, como criação, alteração, pausa, cancelamento e execução.
-- Gerar relatórios simples sobre execuções bem-sucedidas e falhas.
-- Exportar o histórico, por exemplo, em CSV.
-- Informar quando uma tarefa falhar, permitindo que o usuário investigue o motivo.
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
+```
 
-### 5. Tarefas de exemplo
-Para facilitar os testes e a demonstração, o sistema pode oferecer ações seguras predefinidas, como:
-- Consultar o uso de espaço em disco.
-- Registrar data e hora da execução.
-- Verificar a disponibilidade de um diretório de teste.
-- Gerar um relatório de arquivos de uma pasta autorizada.
-- Executar um script Bash mantido pelo próprio projeto.
+5. Inicie o sistema clicando duas vezes em `iniciar_windows.bat`, ou no PowerShell execute:
 
-## Como o sistema funcionará
+```powershell
+.\iniciar_windows.bat
+```
 
-1. O usuário acessa o painel pelo navegador.
-2. Cadastra uma tarefa e escolhe uma ação permitida.
-3. Define o horário ou a frequência de execução.
-4. A aplicação salva a configuração no banco de dados SQLite.
-5. Um componente de agendamento identifica as tarefas que devem ser executadas.
-6. O sistema inicia a ação autorizada como um processo no Linux.
-7. A saída, os erros, o horário e o código de retorno são registrados.
-8. O painel apresenta o resultado e mantém o histórico para consulta.
+6. Abra `http://127.0.0.1:5000` no navegador. Para encerrar o servidor, volte à janela do terminal e pressione `Ctrl+C`.
 
-## Tecnologias previstas
+Se a instalação do Flask falhar, verifique a conexão com a internet e execute novamente o instalador. O PowerShell não precisa reconhecer o comando `bash` nesta versão.
 
-| Tecnologia | Responsabilidade |
-|---|---|
-| Python | Lógica principal da aplicação |
-| Flask | Servidor web e rotas da aplicação |
-| SQLite | Armazenamento de tarefas e histórico |
-| HTML | Estrutura das páginas |
-| CSS | Estilização e adaptação da interface |
-| JavaScript | Interações e atualização de informações no painel |
-| Bash | Scripts de automação e apoio à execução no Linux |
-| `cron` ou agendador próprio | Execução programada das tarefas, conforme a implementação escolhida |
-| Git e GitHub | Versionamento e colaboração |
+## Instalação no Linux / WSL
 
-## Conceitos de Sistemas Operacionais demonstrados
+É necessário Python 3.10+ e conexão à internet para instalar o Flask:
 
-- **Gerenciamento de processos:** iniciar tarefas, acompanhar seu estado e registrar o resultado da execução.
-- **Agendamento:** executar tarefas em horários definidos e lidar com recorrências.
-- **Permissões e segurança:** limitar as ações disponíveis e o acesso aos arquivos e diretórios.
-- **Sistema de arquivos:** ler arquivos autorizados e salvar logs e relatórios.
-- **Terminal e Shell Script:** utilizar scripts Bash para automatizar procedimentos.
-- **Registro de eventos:** manter logs que permitam verificar o comportamento do sistema e diagnosticar falhas.
-- **Códigos de saída:** distinguir uma execução bem-sucedida de uma execução que terminou com erro.
+```bash
+bash scripts/setup.sh
+source .venv/bin/activate
+flask --app run.py run --debug
+```
 
-O projeto deverá demonstrar pelo menos três conceitos de Sistemas Operacionais, incluindo um relacionado a processos, arquivos, armazenamento ou recursos do sistema.
+Abra `http://127.0.0.1:5000`.
 
-## Segurança
+## Testes
 
-Como a aplicação pode iniciar processos no Linux, a segurança deve ser considerada desde o início.
+Windows (PowerShell):
 
-- Não permitir que o usuário envie qualquer comando de terminal para execução livre.
-- Utilizar uma lista de ações previamente autorizadas.
-- Validar todos os parâmetros recebidos pelo formulário.
-- Executar a aplicação com privilégios mínimos, sem usar `sudo` indiscriminadamente.
-- Restringir o acesso a diretórios definidos para o projeto.
-- Registrar quem solicitou uma ação e quando ela foi executada, caso haja autenticação.
-- Evitar expor variáveis de ambiente, senhas, tokens ou outros dados sensíveis nos logs.
-- Tratar cancelamentos e falhas sem deixar processos ou arquivos temporários abandonados.
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
 
-## Automação com Shell Script
+Linux:
 
-O repositório incluirá scripts Bash para apoiar a operação do sistema. Por exemplo, um script poderá preparar os diretórios necessários, iniciar a aplicação em ambiente de desenvolvimento ou executar uma tarefa autorizada e registrar seu resultado.
+```bash
+source .venv/bin/activate
+python -m unittest discover -s tests -v
+```
 
-Os scripts deverão conter instruções de uso e tratamento básico de erros. A automação escolhida será documentada no README e demonstrada durante a apresentação.
+## Como funciona
 
-## Testes e validação
+- **Flask** entrega as páginas web localmente.
+- **SQLite** guarda tarefas, execuções e eventos.
+- Um worker em segundo plano verifica tarefas vencidas a cada dois segundos.
+- **Python `subprocess` não é usado para executar comandos arbitrários**: as quatro ações são implementadas com APIs Python, evitando depender de `bash`, `df` ou `find`.
+- Os agendamentos e o histórico ficam na pasta `instance` do projeto.
 
-Os testes deverão verificar, no mínimo, se:
+## Segurança e limitações
 
-- Uma tarefa pode ser cadastrada e consultada.
-- Uma tarefa única é executada no horário previsto.
-- Uma tarefa recorrente pode ser pausada e reativada.
-- Uma tarefa cancelada não é iniciada posteriormente.
-- O histórico registra o resultado e o código de saída.
-- Uma falha é identificada e apresentada ao usuário.
-- Parâmetros inválidos são rejeitados.
-- Ações não autorizadas não podem ser executadas.
-- O sistema continua funcionando após ser reiniciado, preservando os registros salvos no SQLite.
+- O sistema não permite que o usuário digite comandos arbitrários para execução.
+- Esta é uma versão acadêmica para uso local. Não exponha o servidor de desenvolvimento à internet; não há autenticação multiusuário nem proteção CSRF completa.
+- O agendador funciona dentro do processo web. Se o programa estiver fechado ou o computador desligado, tarefas não serão executadas nesse período. O histórico é salvo, mas não há garantia de execução pontual durante a indisponibilidade.
+- O horário enviado pelo formulário é interpretado como UTC nesta versão inicial; isso pode diferir do horário local em algumas configurações.
+- Cancelar ou pausar uma tarefa impede futuras execuções, mas não interrompe uma execução que já começou.
 
-Os testes devem ser executados em um ambiente Linux documentado, como uma máquina virtual ou o WSL, quando compatível com a configuração adotada.
-
-## Estrutura sugerida do repositório
+## Estrutura principal
 
 ```text
 agendador-web-linux/
-├── app/
-│   ├── __init__.py
-│   ├── routes.py
-│   ├── scheduler.py
-│   ├── task_runner.py
-│   ├── database.py
-│   ├── templates/
-│   └── static/
-│       ├── css/
-│       ├── js/
-│       └── images/
-├── scripts/
-│   ├── setup.sh
-│   └── exemplo_tarefa.sh
-├── tests/
-├── logs/
+├── app/                  # Aplicação Flask, banco, agendador e interface
+├── scripts/setup.sh      # Instalação Linux
+├── scripts/setup_windows.ps1
+├── iniciar_windows.bat   # Inicialização no Windows
+├── tests/                # Testes automatizados
 ├── requirements.txt
-├── .gitignore
-└── README.md
+└── run.py
 ```
 
-A estrutura é uma sugestão inicial e pode ser adaptada conforme a implementação. Arquivos de log, banco de dados local, ambientes virtuais e segredos não devem ser enviados ao GitHub quando contiverem dados locais ou sensíveis.
+## Próximas melhorias
 
-## Escopo inicial (MVP)
+Autenticação, proteção CSRF completa, fuso horário configurável, worker separado e persistente, limites de concorrência, cancelamento de processos em execução e testes de integração contínua.
 
-A primeira versão deverá priorizar:
+## Status
 
-1. Criar e listar tarefas.
-2. Disponibilizar algumas ações seguras predefinidas.
-3. Agendar uma execução única e uma recorrente.
-4. Executar a ação no Linux.
-5. Registrar estado, horário, saída e erros.
-6. Permitir pausar ou cancelar tarefas futuras.
-7. Incluir pelo menos um script Bash funcional.
-8. Documentar instalação, execução e testes.
-
-Depois que o MVP estiver estável, poderão ser adicionados autenticação, níveis de acesso, notificações, exportação de relatórios, execução concorrente controlada e suporte a múltiplos usuários.
-
-## Limitações e decisões de implementação
-
-O projeto será desenvolvido inicialmente para um ambiente Linux controlado. A escolha entre utilizar `cron` e um agendador implementado na aplicação deverá ser definida durante o desenvolvimento: `cron` é adequado para agendamentos do sistema, enquanto um agendador próprio pode facilitar a integração com o banco de dados e o painel web.
-
-A aplicação deverá lidar com reinicializações, tarefas perdidas e execuções duplicadas de forma documentada. O comportamento exato dependerá do mecanismo de agendamento escolhido.
-
-## Resultado esperado
-
-Ao final, o projeto deverá oferecer um painel web funcional para administrar tarefas autorizadas do Linux, acompanhar execuções e consultar um histórico confiável. A solução demonstrará como uma aplicação web pode interagir com recursos do sistema operacional de maneira controlada, segura e automatizada.
-
-## Integrantes
-
-- Nome do integrante 1
-- Nome do integrante 2
-- Nome do integrante 3
-
-## Status do projeto
-
-Planejamento / Em desenvolvimento
+MVP acadêmico em desenvolvimento.

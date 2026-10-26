@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ task.name }} · Agendador Web{% endblock %}
+{% block content %}
+<div class="page-heading"><div><a class="back-link" href="{{ url_for('main.index') }}">← Voltar ao painel</a><p class="eyebrow">DETALHES DA TAREFA</p><h1>{{ task.name }}</h1><p class="muted">{{ actions.get(task.action, task.action) }}</p></div><span class="status {{ 'active' if task.enabled else 'muted-status' }}">{{ 'Ativa' if task.enabled else 'Pausada / encerrada' }}</span></div>
+<section class="panel detail-panel">
+  <h2>Configuração</h2>
+  <dl class="details">
+    <dt>ID</dt><dd>{{ task.id }}</dd>
+    <dt>Tipo</dt><dd>{{ 'Execução única' if task.schedule_type == 'once' else 'Recorrente a cada ' ~ task.interval_minutes ~ ' minutos' }}</dd>
+    <dt>Próxima execução (UTC)</dt><dd class="mono">{{ task.next_run }}</dd>
+    <dt>Criada em (UTC)</dt><dd class="mono">{{ task.created_at }}</dd>
+  </dl>
+</section>
+<section class="panel">
+  <div class="panel-heading"><div><p class="eyebrow">HISTÓRICO</p><h2>Execuções</h2></div><span class="count">{{ runs|length }} execuções</span></div>
+  {% if runs %}
+    {% for run in runs %}
+    <article class="run-card">
+      <div class="run-title"><strong>Execução #{{ run.id }}</strong><span class="status {{ 'success' if run.status == 'concluída' else 'failed' }}">{{ run.status }}</span></div>
+      <div class="run-meta">Início: {{ run.started_at }} · Fim: {{ run.finished_at or 'em andamento' }} · Duração: {{ run.duration_seconds if run.duration_seconds is not none else '—' }} s · Código de saída: {{ run.exit_code if run.exit_code is not none else '—' }}</div>
+      <div class="output-grid">
+        <div><h3>Saída</h3><pre>{{ run.stdout or '(sem saída)' }}</pre></div>
+        <div><h3>Erros</h3><pre>{{ run.stderr or '(sem erros registrados)' }}</pre></div>
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}<div class="empty"><strong>Esta tarefa ainda não foi executada.</strong></div>{% endif %}
+</section>
+<section class="panel">
+  <div class="panel-heading"><div><p class="eyebrow">AUDITORIA</p><h2>Eventos recentes</h2></div></div>
+  {% if events %}<ul class="event-list">{% for event in events %}<li><span class="event-dot"></span><div><strong>{{ event.event }}</strong><small>{{ event.created_at }} · {{ event.details }}</small></div></li>{% endfor %}</ul>{% else %}<p class="muted">Nenhum evento registrado.</p>{% endif %}
+</section>
+{% endblock %}
